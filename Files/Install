@@ -30,6 +30,7 @@ chown www-data:www-data /srv/http/owncloud/data
 
 #Grab Needed Files
 echo -e "${yellow}Getting Prerequisites..this will take a bit.."
+tput sgr0
 sudo apt-get install -y nginx-full curl libapr1 libtool libcurl4-openssl-dev php-pear php-xml-parser php5 php5-cli php5-common php5-curl php5-dev php5-gd php5-mysql php5-fpm php-apc memcached php5-memcached mysql-server
 clear
 
@@ -59,6 +60,7 @@ sed -i 's/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=512/g' /etc/dphys-swapfile
 
 #Install Owncloud
 echo -e "${yellow}Installing Owncloud"
+tput sgr0
 wget http://download.owncloud.org/community/owncloud-6.0.2.tar.bz2
 tar xvf owncloud-6.0.2.tar.bz2
 mv owncloud/ /var/www/
