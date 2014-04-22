@@ -1,0 +1,84 @@
+#!/bin/bash
+
+yellow='\e[1;33m'
+green='\e[1;32m'
+red='\e[0;31m'
+white='\e[1;37m'
+log='logger.txt'
+
+clear
+cp resize /usr/bin/
+chmod +x /usr/bin/resize
+#Update system
+echo -e "${yellow}Updating"
+sudo apt-get update &> "${log}"
+
+#Add Users
+echo -e "${yellow}Adding users"
+{
+groupadd www-data
+usermod -a -G www-data www-data
+} &> "${log}"
+
+#Make Work folders.
+echo -e "${yellow}Making Folders"
+{
+sudo mkdir -p /var/www/owncloud
+mkdir -p /srv/http/owncloud/data
+chown www-data:www-data /srv/http/owncloud/data
+} &> "${log}"
+
+#Grab Needed Files
+echo -e "${yellow}Getting Prerequisites..this will take a bit.."
+sudo apt-get install -y nginx-full curl libapr1 libtool libcurl4-openssl-dev php-pear php-xml-parser php5 php5-cli php5-common php5-curl php5-dev php5-gd php5-mysql php5-fpm php-apc memcached php5-memcached mysql-server
+clear
+
+echo -e "${yellow}Set Permissions"
+chmod +x Files/Size-Files/* &> "${log}"
+
+#Time for cert keys!
+echo -e "${yellow}Generating openssl key (yes it was updated!)"
+echo -e "${green}"
+mkdir /etc/nginx/certs
+(echo US; echo .; echo .; echo .; echo .; echo .; echo .;) | openssl req -newkey rsa:2048 -x509 -days 365 -nodes -keyout /etc/nginx/certs/pi.key -out /etc/nginx/certs/pi.crt 
+chmod 600 /etc/nginx/certs/pi.crt
+chmod 600 /etc/nginx/certs/pi.key
+clear
+
+#Setup Mysql database.
+./dbcreate picloud picloud 12345
+
+#Remove and copy over Default Nginx config
+echo -e "${yellow}Move over default files"
+{
+rm /etc/nginx/sites-available/default
+cp default /etc/nginx/sites-available/
+cp php.ini /etc/php5/fpm/
+sed -i 's/listen =.*/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
+sed -i 's/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=512/g' /etc/dphys-swapfile
+} &> "${log}"
+
+#Install Owncloud
+echo -e "${yellow}Installing Owncloud"
+wget http://download.owncloud.org/community/owncloud-6.0.2.tar.bz2
+tar xvf owncloud-6.0.2.tar.bz2
+mv owncloud/ /var/www/
+mv Size-Files/* /var/www/owncloud/
+chown -R www-data:www-data /var/www
+clear
+
+#Back out and clean up.
+echo -e "${yellow}Cleaning up"
+sleep 2
+{
+cd $HOME
+/etc/init.d/nginx restart
+/etc/init.d/php5-fpm restart
+} &> "${log}"
+
+cd $HOME
+rm -rf workfolder
+clear
+echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
+sleep 10
+exit 0
