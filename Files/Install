@@ -47,7 +47,7 @@ chmod 600 /etc/nginx/certs/pi.key
 clear
 
 #Setup Mysql database.
-./dbcreate picloud picloud 12345
+./dbcreate mycloud picloud 12345
 
 #Remove and copy over Default Nginx config
 echo -e "${yellow}Move over default files"
