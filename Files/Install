@@ -53,7 +53,6 @@ echo -e "${yellow}Move over default files"
 {
 rm /etc/nginx/sites-available/default
 cp default /etc/nginx/sites-available/
-cp php.ini /etc/php5/fpm/
 sed -i 's/listen =.*/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 sed -i 's/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=512/g' /etc/dphys-swapfile
 } &> "${log}"
