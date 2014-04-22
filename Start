@@ -23,6 +23,7 @@ clear
 
 cd Files
 chmod +x Install
+chmod +x resize
 chmod +x dbcreate
 chmod +x Size-Files/*
 
