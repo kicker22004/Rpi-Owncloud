@@ -46,7 +46,7 @@ chmod 600 /etc/nginx/certs/pi.crt
 chmod 600 /etc/nginx/certs/pi.key
 clear
 
-#Setup Mysql database.
+#Setup Mysql database. (Change in the order of | DB Name | DB User | DB Password)
 ./dbcreate mycloud picloud 12345
 
 #Remove and copy over Default Nginx config
